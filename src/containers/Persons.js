@@ -1,28 +1,29 @@
 import React, { Component } from 'react';
 
 import Person from '../components/Person/Person';
+import {bindActionCreators} from 'redux'
+
 import AddPerson from '../components/AddPerson/AddPerson';
+import addPerson from '../action/addPerson';
+import deletePerson from '../action/deletePerson';
 
 class Persons extends Component {
-    state = {
-        persons: []
-    }
+   
 
     personAddedHandler = () => {
+
         const newPerson = {
             id: Math.random(), // not really unique but good enough here!
             name: 'Max',
             age: Math.floor( Math.random() * 40 )
         }
-        this.setState( ( prevState ) => {
-            return { persons: prevState.persons.concat(newPerson)}
-        } );
+        this.props.addPerson(newPerson)
+       
     }
 
     personDeletedHandler = (personId) => {
-        this.setState( ( prevState ) => {
-            return { persons: prevState.persons.filter(person => person.id !== personId)}
-        } );
+        this.deletePerson(personId)
+       
     }
 
     render () {
@@ -41,4 +42,19 @@ class Persons extends Component {
     }
 }
 
-export default Persons;
+const mapStateToProps =(state) => {
+    return {
+        persons: state.persons
+    }
+}
+
+const mapDispatchToProps = (dispatch) => {
+    return bindActionCreators({
+        addPerson: addPerson,
+        deletePerson: deletePerson,
+    }, dispatch) 
+}
+
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(Persons);
